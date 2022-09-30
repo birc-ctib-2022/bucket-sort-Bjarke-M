@@ -29,10 +29,11 @@ def count_keys(keys: list[int]) -> list[int]:
     # we can get the number of keys from keys if
     # it is non-empty. Otherwise we must assume that
     # there are no keys.
-    no_keys = max(keys) + 1 if keys else 0
-    counts = [0] * no_keys
-    # FIXME: count the keys
-    return counts
+    max_keys=max(keys)
+    result=[0 for i in range(0,max_keys+1)]
+    for i in keys:
+        result[i]+=1
+    return result
 
 
 def count_sort(x: list[int]) -> list[int]:
@@ -47,10 +48,15 @@ def count_sort(x: list[int]) -> list[int]:
     >>> count_sort([1, 2, 1, 2, 4])
     [1, 1, 2, 2, 4]
     """
-    counts = count_keys(x)
-    out = [0] * len(x)
-    # FIXME: do the actual sorting
-    return out
+    result=[]
+    for i in range(len(x)):
+        if x[i] != 0:
+            k=x[i]
+            while k:
+                result.append(i)
+                k -= 1
+    return result
+
 
 
 def cumsum(x: list[int]) -> list[int]:
@@ -62,9 +68,12 @@ def cumsum(x: list[int]) -> list[int]:
     >>> cumsum([0, 2, 2, 0, 1])
     [0, 0, 2, 4, 4]
     """
-    out = [0] * len(x)
-    # FIXME: Compute the cumulative sum
-    return out
+    accumulator=0
+    seq1=x #mmh not the smartest way of editing a sequence, but it works
+    for i, val in enumerate(seq1):
+            seq1[i]=accumulator
+            accumulator += val
+    return seq1
 
 
 def bucket_sort(x: list[tuple[int, Any]]) -> list[tuple[int, Any]]:
@@ -79,7 +88,9 @@ def bucket_sort(x: list[tuple[int, Any]]) -> list[tuple[int, Any]]:
     >>> bucket_sort([(1, "a"), (2, "b"), (1, "c"), (2, "d"), (4, "e")])
     [(1, 'a'), (1, 'c'), (2, 'b'), (2, 'd'), (4, 'e')]
     """
-    buckets = cumsum(count_keys([k for k, _ in x]))
+    buckets = cumsum(count_keys([i for i,_ in x]))
     out = [(0, None)] * len(x)
-    # Place the pairs in their buckets
+    for i,v in x:
+        out[buckets[i]] = (i,v)
+        buckets[i] += 1
     return out
