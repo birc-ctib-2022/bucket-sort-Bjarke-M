@@ -29,10 +29,14 @@ def count_keys(keys: list[int]) -> list[int]:
     # we can get the number of keys from keys if
     # it is non-empty. Otherwise we must assume that
     # there are no keys.
-    no_keys = max(keys) + 1 if keys else 0
-    counts = [0] * no_keys
-    # FIXME: count the keys
-    return counts
+    if keys != []: #check that it is non empty
+        max_keys=max(keys) # find the length of the list 
+        result=[0 for i in range(0,max_keys+1)] #make a list with zeros 
+        for i in keys:
+            result[i]+=1 # count every occurence of the int and change the count for the int
+        return result
+    else:
+        return [] # if empty
 
 
 def count_sort(x: list[int]) -> list[int]:
@@ -47,10 +51,16 @@ def count_sort(x: list[int]) -> list[int]:
     >>> count_sort([1, 2, 1, 2, 4])
     [1, 1, 2, 2, 4]
     """
-    counts = count_keys(x)
-    out = [0] * len(x)
-    # FIXME: do the actual sorting
-    return out
+    result=[] # empty list
+    if x != []: #check that input is not empty
+        y=count_keys(x) #make a list which counts every occurence
+        for i in range(len(y)):
+            if y[i] != 0: # in the result we dont want the ints that does not occur in the list
+                k=y[i] # to append the ints in the right order and the right number of times
+                while k:
+                    result.append(i) #appending the ints 
+                    k -= 1 # increment sp we dont run forever
+    return result
 
 
 def cumsum(x: list[int]) -> list[int]:
@@ -62,9 +72,12 @@ def cumsum(x: list[int]) -> list[int]:
     >>> cumsum([0, 2, 2, 0, 1])
     [0, 0, 2, 4, 4]
     """
-    out = [0] * len(x)
-    # FIXME: Compute the cumulative sum
-    return out
+    accumulator=0
+    seq1=x #mmh not the smartest way of editing a sequence, but it works
+    for i, val in enumerate(seq1): #enumerate takes both the index and the value, Thanks Andreas!
+            seq1[i]=accumulator # changes the sequences[index] to our accumulator 
+            accumulator += val # and changes the accumulator for every step
+    return seq1
 
 
 def bucket_sort(x: list[tuple[int, Any]]) -> list[tuple[int, Any]]:
@@ -79,7 +92,15 @@ def bucket_sort(x: list[tuple[int, Any]]) -> list[tuple[int, Any]]:
     >>> bucket_sort([(1, "a"), (2, "b"), (1, "c"), (2, "d"), (4, "e")])
     [(1, 'a'), (1, 'c'), (2, 'b'), (2, 'd'), (4, 'e')]
     """
-    buckets = cumsum(count_keys([k for k, _ in x]))
-    out = [(0, None)] * len(x)
-    # Place the pairs in their buckets
+    buckets = cumsum(count_keys([i for i,_ in x])) #constructs buckets, a list of accumulated sum of the first index in the tuples 
+    out = [(0, None)] * len(x) # making a list of tuples as long as the input
+    if x != []: # making sure it's no empty
+        for i,v in x: # taking both the first and second index of the input ex. 1,a or 2,b etc
+            out[buckets[i]] = (i,v)  # using the value of value of cumsum to determine the index i the result in which we want out key and value
+            buckets[i] += 1 # making sure that we do not try to overwrite our data, by shifting indexes to the 'right'
+    else: 
+        out=[]
     return out
+
+# I dont think i made the most efficient or even readable code, enumerate helped, and if there are other smart moves 
+# feedback is always appreciated.
